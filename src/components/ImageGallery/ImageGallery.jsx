@@ -2,6 +2,7 @@
 import { Component } from "react";
 import { ThreeDots } from 'react-loader-spinner'
 import Button from '../Button/Button'
+import Modal from '../Modal/Modal'
 import styles from './ImageGallery.module.css'
 
 
@@ -20,7 +21,8 @@ export default class ImageGallery extends Component{
         photo: [],
         loading: false,
         currentPage: 1,
-        photoName: ''
+      photoName: '',
+        modalImageUrl:''
     }
     loadMore = () => {
      
@@ -33,7 +35,15 @@ export default class ImageGallery extends Component{
             this.fetchPhotos();
         }
     );
-    };
+  };
+    handleImageClick = (imageURL) => {
+  this.setState({ showModal: true, modalImageUrl: imageURL });
+};
+
+  handleCloseModal = () => {
+    this.setState({ modalImageUrl: '', showModal: false });
+  };
+
     fetchPhotos = () => {
   if (this.props.photoName) {
     this.setState({ loading: true }); // Keep the loading state as true while fetching
@@ -86,13 +96,16 @@ visible={true}
  />}
                     {this.state.photo && this.state.photo.map((photo) => (
             <li key={photo.id}>
-                            <img src={photo.previewURL} alt={photo.tags} />
+                            <img src={photo.previewURL} alt={photo.tags} className={styles.galleryImage}  onClick={() => this.handleImageClick(photo.largeImageURL)}/>
                             
             </li>
             
           ))}
                 </ul>
-                {showLoadMoreButton && <Button onClick={this.loadMore} loading={loading} />}
+            {showLoadMoreButton && <Button onClick={this.loadMore} loading={loading} />}
+            {this.state.showModal && (
+  <Modal imageUrl={this.state.modalImageUrl} onClose={this.handleCloseModal} />
+)}
                  
    </div>
     )

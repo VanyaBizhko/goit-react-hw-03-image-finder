@@ -46,12 +46,12 @@ export default class ImageGallery extends Component{
 
     fetchPhotos = () => {
   if (this.props.photoName) {
-    this.setState({ loading: true }); // Keep the loading state as true while fetching
+    this.setState({ loading: true }); 
     fetch(`https://pixabay.com/api/?q=${this.props.photoName}&page=${this.state.currentPage}&key=35297902-06b0f2f0980941222f0bd9a52&image_type=photo&orientation=horizontal&per_page=12`)
       .then(res => res.json())
       .then((data) => {
         this.setState((prevState) => ({
-          photo: [...prevState.photo, ...data.hits], // Append new photos to the existing list
+          photo: [...prevState.photo, ...data.hits], 
           loading: false,
         }));
       })
@@ -62,20 +62,22 @@ export default class ImageGallery extends Component{
   }
 };
 
-    componentDidUpdate(prevProps) {
-  if (this.props.photoName && prevProps.photoName !== this.props.photoName) {
-        this.setState({ loading: true, photo: [] }); // Clear the photo list before loading new photos
-        fetch(`https://pixabay.com/api/?q=${this.props.photoName}&page=${this.state.currentPage}&key=35297902-06b0f2f0980941222f0bd9a52&image_type=photo&orientation=horizontal&per_page=12`)
-            .then(res => res.json())
-            .then((data) => {
-                this.setState({ photo: data.hits, loading: false });
-            })
-            .catch(error => {
-                console.error("Error loading data:", error);
-                this.setState({ loading: false });
-            });
+ componentDidUpdate(prevProps) {
+    if (this.props.photoName && prevProps.photoName !== this.props.photoName) {
+      
+      this.setState({ loading: true, photo: [], currentPage: 1 });
+      fetch(`https://pixabay.com/api/?q=${this.props.photoName}&page=1&key=35297902-06b0f2f0980941222f0bd9a52&image_type=photo&orientation=horizontal&per_page=12`)
+        .then(res => res.json())
+        .then((data) => {
+          this.setState({ photo: data.hits, loading: false });
+        })
+        .catch(error => {
+          console.error("Error loading data:", error);
+          this.setState({ loading: false });
+        });
     }
-}
+  }
+
         
 
     render() {
@@ -95,7 +97,7 @@ wrapperClassName=""
 visible={true}
  />}
                     {this.state.photo && this.state.photo.map((photo) => (
-            <li key={photo.id}>
+            <li key={photo.id} className={styles.imageGalleryItem}>
                             <img src={photo.previewURL} alt={photo.tags} className={styles.galleryImage}  onClick={() => this.handleImageClick(photo.largeImageURL)}/>
                             
             </li>
